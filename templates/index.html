@@ -2,34 +2,28 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion - Gestion Universitaire</title>
+    <title>Connexion - Portail Universitaire</title>
     <style>
-        body { font-family: sans-serif; background-color: #f4f6f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .box { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-        h1 { text-align: center; color: #333; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
-        .error { color: red; text-align: center; font-weight: bold; margin-bottom: 15px; }
+        body { font-family: sans-serif; background: #f4f6f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 350px; text-align: center; }
+        
+        /* Style pour ton logo */
+        .logo { width: 100px; height: 100px; margin-bottom: 20px; border-radius: 50%; object-fit: cover; }
+        
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; }
     </style>
 </head>
 <body>
-
     <div class="box">
-        <h1>Connexion</h1>
+        <img src="logo.jpg" alt="Logo Université" class="logo">
         
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <div class="error">{{ messages[0] }}</div>
-            {% endif %}
-        {% endwith %}
-
+        <h1>Connexion</h1>
         <form action="/" method="POST">
-            <input type="text" name="identifiant" placeholder="Identifiant (ex: ADM_01)" required>
+            <input type="text" name="identifiant" placeholder="Identifiant" required>
             <input type="password" name="password" placeholder="Mot de passe" required>
             <button type="submit">Se connecter</button>
         </form>
     </div>
-
 </body>
 </html>
