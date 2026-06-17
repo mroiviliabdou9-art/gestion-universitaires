@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Administration - Gestion Globale</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .wrapper-admin {
+            width: 100%;
+            max-width: 450px;
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header h1 {
+            margin-top: 0;
+            color: #333;
+            font-size: 24px;
+            text-align: center;
+            border-bottom: 2px solid #007BFF;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        #menu-principal {
+            display: block;
+            text-align: center;
+            width: 100%;
+        }
+
+        #menu-principal p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+
+        .menu-boutons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .menu-boutons button {
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            border: 1px solid #007BFF;
+            background-color: white;
+            color: #007BFF;
+            transition: all 0.2s ease;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .menu-boutons button:hover {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .formulaire-section {
+            display: none;
+            width: 100%;
+        }
+
+        .formulaire-section h2 {
+            color: #007BFF;
+            font-size: 20px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .btn-retour {
+            padding: 8px 14px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            width: auto;
+        }
+        .btn-retour:hover {
+            background-color: #5a6268;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #444;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+            background-color: #fdfdfd;
+        }
+
+        input:focus, select:focus {
+            border-color: #007BFF;
+            outline: none;
+            background-color: white;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            margin-top: 25px;
+            padding: 12px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button[type="submit"]:hover {
+            background-color: #218838;
+        }
+
+        .info-texte {
+            font-size: 13px;
+            color: #666;
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 15px;
+            line-height: 1.4;
+            text-align: left;
+        }
+
+        .sous-carte-admin {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 18px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            text-align: left;
+        }
+
+        .color-bleu { border-left: 4px solid #007BFF; }
+        .color-rouge { border-left: 4px solid #dc3545; }
+
+        .sous-carte-admin h3 {
+            margin-top: 0;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .btn-action-bleu {
+            width: 100%;
+            margin-top: 15px;
+            padding: 12px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-action-bleu:hover { background-color: #0056b3; }
+
+        .btn-action-rouge {
+            width: 100%;
+            margin-top: 15px;
+            padding: 12px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-action-rouge:hover { background-color: #bd2130; }
+
+        @media (max-width: 480px) {
+            .wrapper-admin { padding: 20px; margin: 15px; }
+            header h1 { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper-admin">
+
+        <header>
+            <h1>Espace Administration</h1>
+        </header>
+
+        <div id="menu-principal">
+            <p>Connecté </p>
+            <div class="menu-boutons">
+                <button onclick="afficherSection('section-inscription')">1 - Nouvel Étudiant</button>
+                <button onclick="afficherSection('section-notes')">2 - Enregistrement Note</button>
+                <button onclick="afficherSection('section-acces')">3 - Gestion des Accès</button>
+                <button onclick="afficherSection('section-profil')">4 - Mon Profil (Modifier)</button>
+                <button onclick="afficherSection('section-archives')">5 - Consulter les Archives</button>
+            </div>
+        </div>
+
+        <div id="section-inscription" class="formulaire-section">
+            <button class="btn-retour" onclick="retourAuMenu()">← Retour au menu</button>
+            <h2>Inscrire un nouvel étudiant</h2>
+            <form action="/ajouter_etudiant" method="POST">
+                <label>Identifiant unique (Doit commencer par ETU_) :</label>
+                <input type="text" name="nouvel_id" placeholder="Ex: ETU_..." required>
+                <label>Nom :</label>
+                <input type="text" name="nom" placeholder="Entrez le nom" required>
+                <label>Prénom :</label>
+                <input type="text" name="Prenom" placeholder="Entrez le prénom" required>
+                <label>Date de naissance :</label>
+                <input type="date" name="date_naissance" required>
+                <label>Lieu de naissance :</label>
+                <input type="text" name="lieu_naissance" placeholder="Lieu de naissance" required>
+                <label>Mention / Niveau :</label>
+                <input type="text" name="niveau" placeholder="Ex: L1 Informatique" required>
+                <label>Mot de passe initial :</label>
+                <input type="password" name="mot_de_passe" placeholder="Créer un mot de passe" required>
+                <button type="submit">Créer le compte étudiant</button>
+            </form>
+        </div>
+
+        <div id="section-notes" class="formulaire-section">
+            <button class="btn-retour" onclick="retourAuMenu()">← Retour au menu</button>
+            <h2>Enregistrer une note</h2>
+            <form action="/ajouter_note" method="POST">
+                <label>Nom de la matière :</label>
+                <input type="text" name="matiere" placeholder="Ex: Algorithme" required>
+                <label>Note obtenue (sur 20) :</label>
+                <input type="number" name="note" step="0.5" min="0" max="20" placeholder="0.0" required>
+                <label>Identifiant de l'Étudiant (ID) :</label>
+                <input type="text" name="id_etudiant" placeholder="Ex: ETU_..." required>
+                <label>Année Universitaire Actuelle :</label>
+                <input type="text" name="annee_universitaire" placeholder="Ex: 2025-2026" required>
+                <button type="submit">Enregistrer la note</button>
+            </form>
+        </div>
+
+        <div id="section-acces" class="formulaire-section">
+            <button class="btn-retour" onclick="retourAuMenu()">← Retour au menu</button>
+            <h2>Gestion des Accès & Écolages</h2>
+            <div class="sous-carte-admin color-bleu">
+                <h3>🔑 Activation du Semestre</h3>
+                <form action="/generer_acces" method="POST">
+                    <label>Sélectionner le Semestre concerné :</label>
+                    <input type="text" name="semestre" placeholder="Ex: Semestre 1" required>
+                    <div class="info-texte">En validant, le système générera les accès pour l'ensemble des étudiants de ce semestre.</div>
+                    <button type="submit" class="btn-action-bleu">Activer les accès globaux</button>
+                </form>
+            </div>
+            <div class="sous-carte-admin color-rouge">
+                <h3>💰 Restriction Financière (Écolage)</h3>
+                <form action="/modifier_statut_paiement" method="POST">
+                    <label>Identifiant de l'Étudiant (ID) :</label>
+                    <input type="text" name="id_etudiant_paye" placeholder="Ex: ETU_..." required>
+                    <label>Statut des droits d'accès :</label>
+                    <select name="statut_ecolage" required>
+                        <option value="">-- Choisir un statut --</option>
+                        <option value="1">🟢 En règle (Autoriser l'accès au Relevé)</option>
+                        <option value="0">🔴 Non payé (Bloquer l'accès / Cadenas)</option>
+                    </select>
+                    <button type="submit" class="btn-action-rouge">Appliquer la restriction</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="section-profil" class="formulaire-section">
+            <button class="btn-retour" onclick="retourAuMenu()">← Retour au menu</button>
+            <h2>Modifier mes informations de connexion</h2>
+            <form action="/modifier_profil" method="POST">
+                <input type="hidden" name="id_admin" value="ADM_01">
+                <label>Nom d'affichage actuel :</label>
+                <input type="text" name="nouveau_nom" value="Administrateur principal" required>
+                <label>Nouveau Mot de passe :</label>
+                <input type="password" name="nouveau_pass" placeholder="Entrez le nouveau mot de passe" required>
+                <button type="submit">Enregistrer les modifications</button>
+            </form>
+        </div>
+
+        <div id="section-archives" class="formulaire-section">
+            <button class="btn-retour" onclick="retourAuMenu()">← Retour au menu</button>
+            <h2>Consulter l'historique des notes (Archives)</h2>
+            <form action="/consulter_archives" method="GET">
+                <label>Choisir l'Année Universitaire :</label>
+                <select name="annee_archive" required>
+                    <option value="">-- Sélectionner une année --</option>
+                    <option value="2024-2025">2024-2025</option>
+                    <option value="2025-2026">2025-2026</option>
+                </select>
+                <label>Identifiant de l'Étudiant (ID) :</label>
+                <input type="text" name="id_etudiant_archive" placeholder="Ex: ETU_..." required>
+                <button type="submit" style="background-color: #007BFF;">Rechercher les notes</button>
+            </form>
+        </div>
+
+    </div>
+
+    <script>
+        function afficherSection(idSection) {
+            document.getElementById('menu-principal').style.display = 'none';
+            document.getElementById(idSection).style.display = 'block';
+        }
+
+        function retourAuMenu() {
+            document.getElementById('section-inscription').style.display = 'none';
+            document.getElementById('section-notes').style.display = 'none';
+            document.getElementById('section-acces').style.display = 'none';
+            document.getElementById('section-profil').style.display = 'none';
+            document.getElementById('section-archives').style.display = 'none';
+            document.getElementById('menu-principal').style.display = 'block';
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Relevé de Notes </title>
+    <style>
+        /* ========================================== */
+        /* STYLES GÉNÉRAUX & CENTRAGE GLOBAL          */
+        /* ========================================== */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .wrapper-etudiant {
+            width: 100%;
+            max-width: 650px;
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header h1 {
+            margin-top: 0;
+            color: #28a745;
+            font-size: 24px;
+            text-align: center;
+            border-bottom: 2px solid #28a745;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        /* ========================================== */
+        /* BLOC INFOS PERSONNELLES DE L'ÉTUDIANT     */
+        /* ========================================== */
+        .carte-etudiant {
+            background-color: #f8f9fa;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 25px;
+        }
+
+        .carte-etudiant p {
+            margin: 6px 0;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .carte-etudiant strong {
+            color: #555;
+        }
+
+        /* ========================================== */
+        /* TABLEAU DES NOTES À 6 COLONNES             */
+        /* ========================================== */
+        .zone-tableau {
+            width: 100%;
+            overflow-x: auto;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            min-width: 550px;
+        }
+
+        th, td {
+            padding: 12px 10px;
+            text-align: center;
+        }
+
+        th:first-child, td:first-child {
+            text-align: left;
+            padding-left: 15px;
+        }
+
+        th {
+            background-color: #28a745;
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        tr {
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .cellule-note-secondaire {
+            color: #666;
+            font-size: 13px;
+        }
+
+        .cellule-total {
+            font-weight: bold;
+            color: #000;
+            background-color: rgba(40, 167, 69, 0.05);
+        }
+
+        .badge-valide {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .badge-non-valide {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        /* ========================================== */
+        /* CASSE RÉSULTATS EN BAS DE PAGE             */
+        /* ========================================== */
+        .box-resultat-final {
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .global-valide {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .global-non-valide {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* ========================================== */
+        /* BOUTON DE DECONNEXION                      */
+        /* ========================================== */
+        .btn-deconnexion {
+            width: 100%;
+            padding: 12px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            box-sizing: border-box;
+            transition: background 0.2s;
+        }
+
+        .btn-deconnexion:hover {
+            background-color: #5a6268;
+        }
+
+        @media (max-width: 480px) {
+            .wrapper-etudiant {
+                padding: 20px;
+                margin: 15px;
+            }
+            header h1 { font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper-etudiant">
+
+        <header>
+            <h1>Mon Relevé de Notes</h1>
+        </header>
+
+        <div class="carte-etudiant">
+            <p><strong>ID Étudiant :</strong> </p>
+            <p><strong>Nom & Prénom :</strong> </p>
+            <p><strong>Né(e) le :</strong> </p>
+            <p><strong>Niveau :</strong> </p>
+            <p><strong>Année Universitaire :</strong> </p>
+        </div>
+
+        <div class="zone-tableau">
+            {% if restriction%}
+            <div style="color: #721c24;
+             background-color: #f8d7da; 
+             border: 1px solid;
+             padding: 15px;
+             text-align: center;
+             border-radius: 5px;
+             margin-bottom: 20px;
+             font-family: sans-serif;">
+            <strong>Acces restreint!</strong> vos resultats sont indisponible. Veuillez règle vos frais de scolarite 
+            </div>
+            {% else %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Matière</th>
+                        <th>Notes1</th>
+                        <th>Notes2</th>
+                        <th>Notes3</th>
+                        <th>Total</th>
+                        <th>Résultat</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </div>
+
+        <div class="box-resultat-final">
+            Résultat Semestriel : 
+        </div>
+        {% endif %}
+
+        <a href="/" class="btn-deconnexion">Se déconnecter</a>
+
+    </div>
+
+</body>
+</html>
