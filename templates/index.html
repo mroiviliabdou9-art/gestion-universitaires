@@ -3,54 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Site des résultats - Connexion</title>
+    <title>Connexion - Système de Gestion</title>
     <style>
-        body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
-        .conteneur-connexion { display: flex; flex-direction: row; width: 800px; max-width: 90%; background-color: white; border-radius: 12px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); overflow: hidden; margin: 20px; }
-        .zone-logo { flex: 1; background-color: #007BFF; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; padding: 30px; text-align: center; }
-        .zone-formulaire { flex: 1; padding: 30px; display: flex; flex-direction: column; justify-content: center; }
-        h1 { margin: 0 0 20px 0; color: #333; font-size: 24px; text-align: center; }
-        label { display: block; margin-top: 15px; font-weight: bold; color: #555; font-size: 14px; }
-        input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
-        .zone-boutons { display: flex; gap: 10px; margin-top: 25px; }
-        button { flex: 1; padding: 12px; font-size: 15px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; }
-        .btn-connecter { background-color: #007BFF; color: white; }
-        .btn-annuler { background-color: #dc3545; color: white; }
-        .message-erreur { color: #dc3545; font-size: 14px; font-weight: bold; margin-top: 15px; text-align: center; }
+        body { 
+            margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; 
+            background-color: #f4f6f9; min-height: 100vh; 
+            display: flex; justify-content: center; align-items: center; 
+        }
+        .conteneur-connexion { 
+            width: 100%; max-width: 400px; background: white; 
+            padding: 30px; border-radius: 12px; 
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); 
+        }
+        h1 { color: #333; text-align: center; margin-bottom: 25px; }
+        label { display: block; margin-top: 15px; font-weight: bold; color: #555; }
+        input { 
+            width: 100%; padding: 12px; margin-top: 5px; 
+            border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; 
+        }
+        button { 
+            width: 100%; padding: 12px; margin-top: 20px; 
+            background-color: #007BFF; color: white; border: none; 
+            border-radius: 6px; cursor: pointer; font-weight: bold; 
+        }
+        button:hover { background-color: #0056b3; }
+        .message-erreur { 
+            color: #dc3545; font-size: 14px; text-align: center; 
+            margin-top: 15px; font-weight: bold; 
+        }
     </style>
 </head>
 <body>
 
     <div class="conteneur-connexion">
-        <div class="zone-logo">
-            <h2 style="margin: 5px 0;">Université / École</h2>
-            <p style="font-size: 12px; opacity: 0.8; margin: 5px 0;">Gestion des résultats</p>
-        </div>
+        <h1>Connexion</h1>
 
-        <div class="zone-formulaire">
-            <header>
-                <h1>BIENVENUE</h1>
-            </header>
+        <form action="/" method="post">
+            <label>Identifiant :</label>
+            <input type="text" name="identifiant" placeholder="Ex: ADM_01" required>
 
-            <form action="/" method="post">
-                <label>Identification :</label>
-                <input type="text" name="identifiant" placeholder="Ex: ADM_01" required>
+            <label>Mot de passe :</label>
+            <input type="password" name="password" placeholder="••••••••" required>
 
-                <label>Mot de passe :</label>
-                <input type="password" name="password" placeholder="••••••••" required>
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                <div class="message-erreur">{{ messages[0] }}</div>
+              {% endif %}
+            {% endwith %}
 
-                {% with messages = get_flashed_messages() %}
-                  {% if messages %}
-                    <div class="message-erreur">{{ messages[0] }}</div>
-                  {% endif %}
-                {% endwith %}
-
-                <div class="zone-boutons">
-                    <button type="reset" class="btn-annuler">Annuler</button>
-                    <button type="submit" class="btn-connecter">Se connecter</button>
-                </div>
-            </form>
-        </div>
+            <button type="submit">Se connecter</button>
+        </form>
     </div>
+
 </body>
 </html>

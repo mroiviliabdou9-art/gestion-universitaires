@@ -2,59 +2,34 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Relevé de Notes</title>
+    <title>Mon Relevé</title>
     <style>
-        /* ... (Garde ton style CSS actuel intact) ... */
-        body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma; background-color: #f4f6f9; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
-        .wrapper-etudiant { width: 100%; max-width: 650px; background-color: white; padding: 30px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); margin: 20px; }
-        header h1 { color: #28a745; text-align: center; border-bottom: 2px solid #28a745; padding-bottom: 12px; }
-        .carte-etudiant { background-color: #f8f9fa; border-left: 4px solid #28a745; padding: 15px; border-radius: 0 8px 8px 0; margin-bottom: 25px; }
+        body { font-family: sans-serif; background: #f4f6f9; padding: 20px; }
+        .box { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 12px; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
-        th { background-color: #28a745; color: white; }
-        .btn-deconnexion { display: block; width: 100%; padding: 12px; background-color: #6c757d; color: white; text-align: center; border-radius: 6px; text-decoration: none; margin-top: 20px; font-weight: bold; }
+        th { background: #007BFF; color: white; }
+        .btn-logout { background: #dc3545; color: white; display: block; text-align: center; padding: 10px; border-radius: 4px; text-decoration: none; margin-top: 20px; }
     </style>
 </head>
 <body>
-
-    <div class="wrapper-etudiant">
-        <header>
-            <h1>Mon Relevé de Notes</h1>
-        </header>
-
-        <div class="carte-etudiant">
-            <p><strong>ID Étudiant :</strong> {{ session['user_id'] }}</p>
-            <p><strong>Nom & Prénom :</strong> {{ session['nom'] }}</p>
-        </div>
-
-        <div class="zone-tableau">
-            {% if restriction %}
-            <div style="color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 15px; text-align: center; border-radius: 5px;">
-                <strong>Accès restreint !</strong> Vos résultats sont indisponibles. Veuillez régler vos frais de scolarité.
+    <div class="box">
+        <h1>Relevé de {{ session['nom'] }}</h1>
+        
+        {% if restriction %}
+            <div style="background:#f8d7da; padding:15px; color:#721c24; text-align:center;">
+                Accès restreint : Veuillez régulariser vos frais de scolarité.
             </div>
-            {% else %}
+        {% else %}
             <table>
-                <thead>
-                    <tr>
-                        <th>Matière</th>
-                        <th>Note</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for note in notes %}
-                    <tr>
-                        <td>{{ note.matiere }}</td>
-                        <td>{{ note.note }} / 20</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
+                <tr><th>Matière</th><th>Note</th></tr>
+                {% for note in notes %}
+                <tr><td>{{ note.matiere }}</td><td>{{ note.note }} / 20</td></tr>
+                {% endfor %}
             </table>
-            {% endif %}
-        </div>
+        {% endif %}
 
-        <a href="{{ url_for('logout') }}" class="btn-deconnexion">Se déconnecter</a>
+        <a href="{{ url_for('logout') }}" class="btn-logout">Déconnexion</a>
     </div>
-
 </body>
 </html>
