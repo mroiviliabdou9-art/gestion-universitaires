@@ -5,137 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Site des résultats - Connexion</title>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f9;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .conteneur-connexion {
-            display: flex;
-            flex-direction: row;
-            width: 800px;
-            max-width: 90%;
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            margin: 20px;
-        }
-
-        /* CÔTÉ GAUCHE : LE LOGO */
-        .zone-logo {
-            flex: 1;
-            background-color: #007BFF;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .zone-logo .logo-placeholder {
-            width: 100px;
-            height: 100px;
-            background-color: rgba(255, 255, 255, 0.2);
-            border: 3px dashed white;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        /* CÔTÉ DROIT : LE FORMULAIRE */
-        .zone-formulaire {
-            flex: 1;
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        h1 {
-            margin: 0 0 20px 0;
-            color: #333;
-            font-size: 24px;
-            text-align: center;
-        }
-
-        label {
-            display: block;
-            margin-top: 15px;
-            font-weight: bold;
-            color: #555;
-            font-size: 14px;
-        }
-
-        input {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 14px;
-            background-color: #fdfdfd;
-        }
-
-        .zone-boutons {
-            display: flex;
-            gap: 10px;
-            margin-top: 25px;
-        }
-
-        button {
-            flex: 1;
-            padding: 12px;
-            font-size: 15px;
-            font-weight: bold;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
+        body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .conteneur-connexion { display: flex; flex-direction: row; width: 800px; max-width: 90%; background-color: white; border-radius: 12px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); overflow: hidden; margin: 20px; }
+        .zone-logo { flex: 1; background-color: #007BFF; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; padding: 30px; text-align: center; }
+        .zone-formulaire { flex: 1; padding: 30px; display: flex; flex-direction: column; justify-content: center; }
+        h1 { margin: 0 0 20px 0; color: #333; font-size: 24px; text-align: center; }
+        label { display: block; margin-top: 15px; font-weight: bold; color: #555; font-size: 14px; }
+        input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+        .zone-boutons { display: flex; gap: 10px; margin-top: 25px; }
+        button { flex: 1; padding: 12px; font-size: 15px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; }
         .btn-connecter { background-color: #007BFF; color: white; }
         .btn-annuler { background-color: #dc3545; color: white; }
-
-        /* Style pour l'erreur */
-        .message-erreur {
-            color: #dc3545;
-            font-size: 14px;
-            font-weight: bold;
-            margin-top: 15px;
-            text-align: center;
-            display: none;
-        }
-
-        @media (max-width: 768px) {
-            .conteneur-connexion {
-                flex-direction: column;
-                width: 100%;
-                max-width: 360px;
-            }
-            .zone-logo { padding: 20px; }
-            .zone-formulaire { padding: 20px; }
-        }
+        .message-erreur { color: #dc3545; font-size: 14px; font-weight: bold; margin-top: 15px; text-align: center; }
     </style>
 </head>
 <body>
 
     <div class="conteneur-connexion">
-        
         <div class="zone-logo">
-            <div class="logo-placeholder">LOGO ICI</div>
             <h2 style="margin: 5px 0;">Université / École</h2>
             <p style="font-size: 12px; opacity: 0.8; margin: 5px 0;">Gestion des résultats</p>
         </div>
@@ -145,43 +32,25 @@
                 <h1>BIENVENUE</h1>
             </header>
 
-            <form id="formConnexion" action="/" method="post">
+            <form action="/" method="post">
                 <label>Identification :</label>
-                <input type="text" id="username" name="identifiant" placeholder="Ex: ADM_01" required>
+                <input type="text" name="identifiant" placeholder="Ex: ADM_01" required>
 
                 <label>Mot de passe :</label>
-                <input type="password" id="password" name="password" placeholder="••••••••" required>
+                <input type="password" name="password" placeholder="••••••••" required>
 
-                <div id="erreurBox" class="message-erreur">Identifiant ou mot de passe incorrect.</div>
+                {% with messages = get_flashed_messages() %}
+                  {% if messages %}
+                    <div class="message-erreur">{{ messages[0] }}</div>
+                  {% endif %}
+                {% endwith %}
 
                 <div class="zone-boutons">
-                    <button type="button" class="btn-annuler" onclick="window.location.reload();">Annuler</button>
+                    <button type="reset" class="btn-annuler">Annuler</button>
                     <button type="submit" class="btn-connecter">Se connecter</button>
                 </div>
             </form>
         </div>
-
     </div>
-
-    <script>
-        function validerConnexion(event) {
-            event.preventDefault(); // Empêche le rechargement de la page
-            
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
-            const erreurBox = document.getElementById('erreurBox');
-
-            // Vérification des identifiants demandés
-            if (user === "ADM_01" && pass === "admin123") {
-                erreurBox.style.display = "none";
-                // Redirige vers le fichier Gestion_admin.html situé dans le même dossier
-                window.location.href = "Gestion_admin.html";
-            } else {
-                // Affiche le message d'erreur si ce n'est pas correct
-                erreurBox.style.display = "block";
-            }
-        }
-    </script>
-
 </body>
 </html>
