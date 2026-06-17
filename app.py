@@ -20,7 +20,7 @@ def init_db():
             id_utilisateur TEXT PRIMARY KEY,
             nom TEXT NOT NULL,
             mot_de_passe TEXT NOT NULL,
-            role TEXT NOT NULL
+            role TEXT NOT NULL,
             paiement TEXT DEFAULT 'paye'
         )
     ''')
