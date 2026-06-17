@@ -54,7 +54,7 @@ def se_connecter():
             return redirect(url_for('releve_notes'))
 
     if request.method == 'POST':
-        user_id = request.form.get('Identifiant', '').strip()
+        user_id = request.form.get('identifiant', '').strip()
         password = request.form.get('password', '').strip()
 
         conn = get_db_connection()
@@ -80,7 +80,7 @@ def se_connecter():
                 
                 return redirect(url_for('releve_notes'))
         else:
-            flash("Identifiant ou mot_de_passe incorrect.")
+            flash("identifiant ou mot_de_passe incorrect.")
             return redirect(url_for('se_connecter'))
 
     return render_template('index.html')
