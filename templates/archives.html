@@ -2,44 +2,61 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Archives Étudiant</title>
+    <title>Archives - Administration</title>
     <style>
         body { font-family: sans-serif; background: #f4f6f9; padding: 20px; }
-        .box { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        h1 { color: #333; text-align: center; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .box { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
+        h1 { color: #333; }
+        
+        /* Formulaire de recherche */
+        .search-form { display: flex; gap: 10px; margin-bottom: 30px; }
+        input { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 6px; }
+        button { padding: 12px 20px; background: #007BFF; color: white; border: none; border-radius: 6px; cursor: pointer; }
+        
+        /* Tableau */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
-        th { background: #6c757d; color: white; }
-        .btn-retour { display: block; width: 100%; padding: 10px; margin-top: 20px; background: #007BFF; color: white; text-align: center; text-decoration: none; border-radius: 5px; }
+        th { background: #f8f9fa; }
+        
+        /* Bouton retour */
+        .btn-retour { display: inline-block; margin-top: 20px; padding: 10px 20px; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; }
     </style>
 </head>
 <body>
     <div class="box">
-        <h1>Mes Archives</h1>
-        <p>Historique des documents et dossiers :</p>
+        <h1>Archives Générales</h1>
+        
+        <form method="POST" class="search-form">
+            <input type="text" name="id" placeholder="Matricule étudiant" required>
+            <input type="text" name="annee" placeholder="Année (ex: 2026)" required>
+            <button type="submit">Rechercher</button>
+        </form>
 
         <table>
             <thead>
                 <tr>
+                    <th>Matière</th>
+                    <th>Note</th>
                     <th>Année</th>
-                    <th>Document</th>
                 </tr>
             </thead>
             <tbody>
-                {% for archive in archives %}
+                {% for n in notes %}
                 <tr>
-                    <td>{{ archive.annee }}</td>
-                    <td>{{ archive.document }}</td>
+                    <td>{{ n.matiere }}</td>
+                    <td>{{ n.note }}</td>
+                    <td>{{ n.annee }}</td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="2">Aucune archive disponible.</td>
+                    <td colspan="3">Aucune donnée trouvée pour cette recherche.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
 
-        <a href="/releve_notes" class="btn-retour">⬅ Retour au relevé</a>
+        <a href="/admin" class="btn-retour">⬅ Retour Administration</a>
     </div>
 </body>
 </html>

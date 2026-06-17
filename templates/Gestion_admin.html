@@ -2,63 +2,73 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Espace Administration</title>
+    <title>Interface Administration</title>
     <style>
         body { font-family: sans-serif; background: #f4f6f9; padding: 20px; }
         .box { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .section { display: none; }
+        .section { display: none; margin-top: 20px; }
         input { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        button, .btn-retour { width: 100%; padding: 12px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; text-align: center; display: block; text-decoration: none; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; }
         .btn-nav { background: #007BFF; color: white; }
         .btn-retour { background: #6c757d; color: white; }
     </style>
 </head>
 <body>
     <div class="box">
-        <h1 id="titre-principal">Administration</h1>
-
+        <h1>Espace Administration</h1>
+        
         <div id="menu-principal">
             <button class="btn-nav" onclick="show('inscrire')">1 - Inscrire un étudiant</button>
-            <button class="btn-nav" onclick="show('note')">2 - Ajouter une note</button>
-            <button class="btn-nav" onclick="show('archives')">3 - Consultation archives</button>
-            <button class="btn-nav" onclick="show('profil')">4 - Profil Administration</button>
+            <button class="btn-nav" onclick="show('notes')">2 - Remplissage des notes</button>
+            <button class="btn-nav" onclick="show('acces')">3 - Gestion accès</button>
+            <button class="btn-nav" onclick="show('profil')">4 - Modifier profil admin</button>
+            <button class="btn-nav" onclick="show('archives')">5 - Archives</button>
         </div>
 
         <div id="inscrire" class="section">
-            <h2>Nouvel Étudiant</h2>
+            <h2>Inscription</h2>
             <form action="/ajouter_etudiant" method="POST">
                 <input type="text" name="id" placeholder="Matricule" required>
                 <input type="text" name="nom" placeholder="Nom complet" required>
-                <input type="date" name="date_nais" required>
-                <input type="text" name="lieu" placeholder="Lieu de naissance" required>
-                
-                <input type="text" name="mention" placeholder="Niveau / Mention (ex: L2 Informatique)" required>
-                
-                <input type="password" name="mdp" placeholder="Mot de passe étudiant" required>
-                <button type="submit" style="background: #28a745; color:white;">Enregistrer</button>
+                <input type="text" name="mention" placeholder="Niveau / Mention" required>
+                <input type="password" name="mdp" placeholder="Mot de passe" required>
+                <button type="submit" style="background:#28a745; color:white;">Enregistrer</button>
             </form>
             <button class="btn-retour" onclick="show('menu-principal')">⬅ Retour</button>
         </div>
 
-        <div id="note" class="section">
+        <div id="notes" class="section">
             <h2>Ajouter une note</h2>
             <form action="/ajouter_note" method="POST">
                 <input type="text" name="id" placeholder="Matricule étudiant" required>
                 <input type="text" name="matiere" placeholder="Matière" required>
-                <input type="number" name="note" step="0.5" placeholder="Note / 20" required>
-                <button type="submit" style="background: #28a745; color:white;">Valider</button>
+                <input type="number" name="note" step="0.5" placeholder="Note (ex: 15.5)" required>
+                <button type="submit" style="background:#28a745; color:white;">Valider</button>
             </form>
             <button class="btn-retour" onclick="show('menu-principal')">⬅ Retour</button>
         </div>
 
-        <div id="archives" class="section">
-            <h2>Archives</h2>
-            <p>Accès restreint à l'administration.</p>
+        <div id="acces" class="section">
+            <h2>Gestion des accès</h2>
+            <p>Le système génère automatiquement l'accès via le matricule et le mot de passe défini lors de l'inscription.</p>
             <button class="btn-retour" onclick="show('menu-principal')">⬅ Retour</button>
         </div>
 
         <div id="profil" class="section">
             <h2>Profil Administration</h2>
+            <input type="text" placeholder="Nouveau nom administrateur">
+            <input type="password" placeholder="Nouveau mot de passe">
+            <button style="background:#28a745; color:white;">Sauvegarder</button>
+            <button class="btn-retour" onclick="show('menu-principal')">⬅ Retour</button>
+        </div>
+
+        <div id="archives" class="section">
+            <h2>Archives</h2>
+            <form action="/archives" method="POST">
+                <input type="text" name="id" placeholder="Matricule étudiant">
+                <input type="text" name="annee" placeholder="Année">
+                <button type="submit">Consulter archives</button>
+            </form>
             <button class="btn-retour" onclick="show('menu-principal')">⬅ Retour</button>
         </div>
     </div>

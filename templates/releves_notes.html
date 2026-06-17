@@ -2,30 +2,33 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Mon Relevé de Notes</title>
+    <title>Relevé de Notes</title>
     <style>
         body { font-family: sans-serif; background: #f4f6f9; padding: 20px; }
-        .box { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .box { max-width: 700px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         
-        /* Logo en haut à gauche */
-        .header { display: flex; align-items: center; margin-bottom: 20px; }
-        .logo-small { width: 60px; height: 60px; margin-right: 15px; border-radius: 50%; }
-        
+        /* En-tête avec logo */
+        .header { display: flex; align-items: center; border-bottom: 2px solid #007BFF; padding-bottom: 15px; margin-bottom: 25px; }
+        .logo-small { width: 60px; height: 60px; margin-right: 20px; border-radius: 8px; }
         h1 { color: #007BFF; margin: 0; }
+        
+        /* Tableau */
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
         th { background: #007BFF; color: white; }
-        .btn-logout { display: block; width: 100%; padding: 10px; margin-top: 20px; background: #dc3545; color: white; text-align: center; text-decoration: none; border-radius: 5px; }
+        
+        /* Pied de page et bouton */
+        .btn-logout { display: block; width: 100%; padding: 12px; margin-top: 30px; background: #dc3545; color: white; text-align: center; text-decoration: none; border-radius: 6px; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="box">
         <div class="header">
-            <img src="{{ url_for('static', filename='logo.jpg') }}" alt="Logo" class="logo-small">
-            <h1>Mon Relevé</h1>
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo-small">
+            <h1>Relevé de Notes</h1>
         </div>
 
-        <p><strong>Étudiant :</strong> {{ session.get('nom') }}</p>
+        <p><strong>Étudiant(e) :</strong> {{ session.get('user_id') }}</p>
 
         <table>
             <thead>
@@ -44,13 +47,13 @@
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="3">Aucune note enregistrée.</td>
+                    <td colspan="3">Aucune note disponible pour le moment.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
 
-        <a href="{{ url_for('logout') }}" class="btn-logout">Se déconnecter</a>
+        <a href="/" class="btn-logout">Se déconnecter</a>
     </div>
 </body>
 </html>
