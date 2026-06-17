@@ -1,0 +1,6 @@
+services:
+    - type: web
+      name: gestion-universitaire
+      runtime: python
+      buildcommand: pip install -r requiremrnts.
+      startCommand: gunicorn app:app
