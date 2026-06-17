@@ -2,7 +2,7 @@ import os
 import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='Templates')
 app.secret_key = 'cle_secrete_universite_2026'
 
 DB_FILE = 'gestion_univ.db' 
