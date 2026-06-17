@@ -21,6 +21,7 @@ def init_db():
             nom TEXT NOT NULL,
             mot_de_passe TEXT NOT NULL,
             role TEXT NOT NULL
+            paiement TEXT DEFAULT 'paye'
         )
     ''')
     
@@ -79,7 +80,7 @@ def se_connecter():
                 
                 return redirect(url_for('releve_notes'))
         else:
-            flash("Identifiant ou mot de passe incorrect.")
+            flash("Identifiant ou mot_de_passe incorrect.")
             return redirect(url_for('se_connecter'))
 
     return render_template('index.html')
