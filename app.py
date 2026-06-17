@@ -5,10 +5,9 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 app = Flask(__name__)
 app.secret_key = 'cle_secrete_universite_2026'
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'gestion_univ.db')
-
+DB_FILE = 'gestion_univ.db' 
 def get_db_connection():
-    conn = sqlite3.connect('gestion_univ.db')
+    conn = sqlite3.connect('gestion_univ.db',timeout=20.0)
     conn.row_factory = sqlite3.Row
     return conn
 
