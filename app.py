@@ -2,7 +2,7 @@ import os
 import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 
-app = Flask(__name__, template_folder='Templates')
+app = Flask(__name__)
 app.secret_key = 'cle_secrete_universite_2026'
 
 DB_FILE = 'gestion_univ.db' 
@@ -171,10 +171,10 @@ def releve_notes():
     etudiant= conn.execute('SELECT paiement FROM utilisateurs WHERE id_utilisateur=?', (session['user_id'],)).fetchone()
     if etudiant and etudiant['paiement']=='non_paye':
         conn.close()
-        return render_template('Releves_notes.html', restriction=True, notes=[])
+        return render_template('releves_notes.html', restriction=True, notes=[])
     mes_notes= conn.execute('SELECT matiere, note FROM notes WHERE id_etudiant=?',(session['user_id'],)).fetchall()
     conn.close()
-    return render_template('Releves_notes.html',notes=mes_notes)
+    return render_template('releves_notes.html',notes=mes_notes)
 
 
 @app.route('/logout')
