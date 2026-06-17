@@ -172,7 +172,7 @@ def releve_notes():
     if etudiant and etudiant['paiement']=='non_paye':
         conn.close()
         return render_template('Releves_notes.html', restriction=True, notes=[])
-    mes_notes= conn.execute('SELECT matiere, note FROM notes WHERE id_etudiant=?',(session['user_id'],)).fetchone()
+    mes_notes= conn.execute('SELECT matiere, note FROM notes WHERE id_etudiant=?',(session['user_id'],)).fetchall()
     conn.close()
     return render_template('Releves_notes.html',notes=mes_notes)
 
