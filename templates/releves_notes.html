@@ -19,7 +19,20 @@
         
         /* Pied de page et bouton */
         .btn-logout { display: block; width: 100%; padding: 12px; margin-top: 30px; background: #dc3545; color: white; text-align: center; text-decoration: none; border-radius: 6px; font-weight: bold; }
+        /* Style par défaut pour mobile (le plus simple) */
+        .box { width: 90%; padding: 15px; }
+
+        /* Pour les tablettes (écran > 600px) */
+        @media (min-width: 600px) {
+        .box { width: 450px; }
+        }
+
+        /* Pour les PC (écran > 900px) */
+        @media (min-width: 900px) {
+        .box { width: 600px; }
+        }
     </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <div class="box">
