@@ -2,37 +2,35 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Relevé de Notes</title>
     <style>
-        body { font-family: sans-serif; background: #f4f6f9; padding: 20px; }
-        .box { max-width: 700px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        body { font-family: sans-serif; background: #f4f6f9; padding: 20px; margin: 0; }
         
-        /* En-tête avec logo */
+        /* Conteneur principal flexible */
+        .box { 
+            width: 100%; 
+            max-width: 800px; /* Largeur confortable sur PC */
+            margin: auto; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-sizing: border-box; /* Important pour que le padding ne dépasse pas */
+        }
+        
         .header { display: flex; align-items: center; border-bottom: 2px solid #007BFF; padding-bottom: 15px; margin-bottom: 25px; }
-        .logo-small { width: 60px; height: 60px; margin-right: 20px; border-radius: 8px; }
-        h1 { color: #007BFF; margin: 0; }
+        .logo-small { width: 50px; height: 50px; margin-right: 15px; border-radius: 8px; }
+        h1 { color: #007BFF; font-size: 1.5rem; margin: 0; }
         
-        /* Tableau */
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        /* Tableau scrollable sur mobile */
+        .table-container { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; min-width: 400px; }
         th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
         th { background: #007BFF; color: white; }
         
-        /* Pied de page et bouton */
-        .btn-logout { display: block; width: 100%; padding: 12px; margin-top: 30px; background: #dc3545; color: white; text-align: center; text-decoration: none; border-radius: 6px; font-weight: bold; }
-        /* Style par défaut pour mobile (le plus simple) */
-        .box { width: 90%; padding: 15px; }
-
-        /* Pour les tablettes (écran > 600px) */
-        @media (min-width: 600px) {
-        .box { width: 450px; }
-        }
-
-        /* Pour les PC (écran > 900px) */
-        @media (min-width: 900px) {
-        .box { width: 600px; }
-        }
+        .btn-logout { display: block; width: 100%; padding: 12px; margin-top: 30px; background: #dc3545; color: white; text-align: center; text-decoration: none; border-radius: 6px; font-weight: bold; box-sizing: border-box; }
     </style>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <div class="box">
@@ -43,30 +41,47 @@
 
         <p><strong>Étudiant(e) :</strong> {{ session.get('user_id') }}</p>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Matière</th>
-                    <th>Notes</th>
-                    <th>Moyenne</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in notes %}
-                <tr>
-                    <td>{{ item.matiere }}</td>
-                    <td>{{ item.liste_notes }}</td>
-                    <td><strong>{{ "%.2f"|format(item.moyenne) }}</strong></td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="3">Aucune note disponible pour le moment.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Matière</th>
+                        <th>Notes</th>
+                        <th>Moyenne</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in notes %}
+                    <tr>
+                        <td>{{ item.matiere }}</td>
+                        <td>{{ item.liste_notes }}</td>
+                        <td><strong>{{ "%.2f"|format(item.moyenne) }}</strong></td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="3">Aucune note disponible.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <button onclick="genererPDF()" class="btn-download">Télécharger en PDF</button>
         <a href="/" class="btn-logout">Se déconnecter</a>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <script>
+        function genererPDF() {
+          const element = document.querySelector('.box'); // On sélectionne tout le bloc du relevé
+          const opt = {
+            margin:       10,
+            filename:     'Releve_Notes.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          };
+          html2pdf().set(opt).from(element).save();
+        }
+    </script>
 </body>
 </html>

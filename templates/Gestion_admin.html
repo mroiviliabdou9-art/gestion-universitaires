@@ -56,16 +56,29 @@
                 <input type="text" name="id" placeholder="Matricule étudiant" required>
                 <input type="text" name="matiere" placeholder="Matière" required>
                 <input type="number" name="note" step="0.5" placeholder="Note (ex: 15.5)" required>
+                <select name="semestre">
+                <option value="S1">Semestre 1</option>
+                <option value="S2">Semestre 2</option>
+                </select>
+    
+                <input type="text" name="annee" placeholder="Année (ex: 2026)" required>
                 <button type="submit" style="background:#28a745; color:white;">Valider</button>
             </form>
             <button class="btn-retour" onclick="show('menu-principal')">⬅ Retour</button>
         </div>
 
-        <div id="acces" class="section">
-            <h2>Gestion des accès</h2>
-            <p>Le système génère automatiquement l'accès via le matricule et le mot de passe défini lors de l'inscription.</p>
-            <button class="btn-retour" onclick="show('menu-principal')">⬅ Retour</button>
-        </div>
+        <div class="card">
+    <h2>Gestion acces</h2>
+    <form action="/update_periode" method="POST">
+        <select name="periode">
+            <option value="S1">Semestre 1</option>
+            <option value="S2">Semestre 2</option>
+            <option value="REPECHAGE">Répêchage</option>
+            <option value="FERME">Fermer le système</option>
+        </select>
+        <button type="submit">Appliquer</button>
+    </form>
+</div>
 
         <div id="profil" class="section">
             <h2>Profil Administration</h2>
