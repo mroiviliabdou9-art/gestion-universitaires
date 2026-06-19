@@ -7,22 +7,12 @@
         body { font-family: sans-serif; background: #f4f6f9; padding: 20px; }
         .box { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .section { display: none; margin-top: 20px; }
-        input { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        input, select { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
         button { width: 100%; padding: 12px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; }
         .btn-nav { background: #007BFF; color: white; }
         .btn-retour { background: #6c757d; color: white; }
-        /* Style par défaut pour mobile (le plus simple) */
+        .btn-valider { background:#28a745; color:white; }
         .box { width: 90%; padding: 15px; }
-
-        /* Pour les tablettes (écran > 600px) */
-        @media (min-width: 600px) {
-        .box { width: 450px; }
-        }
-
-        /* Pour les PC (écran > 900px) */
-        @media (min-width: 900px) {
-        .box { width: 600px; }
-        }
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
@@ -45,7 +35,7 @@
                 <input type="text" name="nom" placeholder="Nom complet" required>
                 <input type="text" name="mention" placeholder="Niveau / Mention" required>
                 <input type="password" name="mdp" placeholder="Mot de passe" required>
-                <button type="submit" style="background:#28a745; color:white;">Enregistrer</button>
+                <button type="submit" class="btn-valider">Enregistrer</button>
             </form>
             <button class="btn-retour" onclick="show('menu-principal')">⬅ Retour</button>
         </div>
@@ -57,34 +47,34 @@
                 <input type="text" name="matiere" placeholder="Matière" required>
                 <input type="number" name="note" step="0.5" placeholder="Note (ex: 15.5)" required>
                 <select name="semestre">
-                <option value="S1">Semestre 1</option>
-                <option value="S2">Semestre 2</option>
+                    <option value="S1">Semestre 1</option>
+                    <option value="S2">Semestre 2</option>
                 </select>
-    
                 <input type="text" name="annee" placeholder="Année (ex: 2026)" required>
-                <button type="submit" style="background:#28a745; color:white;">Valider</button>
+                <button type="submit" class="btn-valider">Valider</button>
             </form>
             <button class="btn-retour" onclick="show('menu-principal')">⬅ Retour</button>
         </div>
 
-        <div class="card">
-    <h2>Gestion acces</h2>
-    <form action="/update_periode" method="POST">
-        <select name="periode">
-            <option value="S1">Semestre 1</option>
-            <option value="S2">Semestre 2</option>
-            <option value="REPECHAGE">Répêchage</option>
-            <option value="FERME">Fermer le système</option>
-        </select>
-        <button type="submit">Appliquer</button>
-    </form>
-</div>
+        <div id="acces" class="section">
+            <h2>Gestion accès</h2>
+            <form action="/update_periode" method="POST">
+                <select name="periode">
+                    <option value="S1">Semestre 1</option>
+                    <option value="S2">Semestre 2</option>
+                    <option value="REPECHAGE">Répêchage</option>
+                    <option value="FERME">Fermer le système</option>
+                </select>
+                <button type="submit" class="btn-valider">Appliquer</button>
+            </form>
+            <button class="btn-retour" onclick="show('menu-principal')">⬅ Retour</button>
+        </div>
 
         <div id="profil" class="section">
             <h2>Profil Administration</h2>
             <input type="text" placeholder="Nouveau nom administrateur">
             <input type="password" placeholder="Nouveau mot de passe">
-            <button style="background:#28a745; color:white;">Sauvegarder</button>
+            <button class="btn-valider">Sauvegarder</button>
             <button class="btn-retour" onclick="show('menu-principal')">⬅ Retour</button>
         </div>
 
@@ -93,7 +83,7 @@
             <form action="/archives" method="POST">
                 <input type="text" name="id" placeholder="Matricule étudiant">
                 <input type="text" name="annee" placeholder="Année">
-                <button type="submit">Consulter archives</button>
+                <button type="submit" class="btn-nav">Consulter archives</button>
             </form>
             <button class="btn-retour" onclick="show('menu-principal')">⬅ Retour</button>
         </div>
