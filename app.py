@@ -91,30 +91,35 @@ def ajouter_note():
     if session.get('role') != 'admin':
         return "Accès refusé", 403
     
-    # 1. Récupération et nettoyage des données
     mat_etu = request.form.get('id')
     matiere = request.form.get('matiere')
-    annee = request.form.get('annee')
+    note = request.form.get('note')
     semestre = request.form.get('semestre')
+    annee = request.form.get('annee')
     
     try:
-        note = float(request.form.get('note'))
+        note_val = float(note)
     except (TypeError, ValueError):
         return "Erreur : La note doit être un nombre valide.", 400
 
-    # 2. Validation basique
-    if not all([mat_etu, matiere, semestre, annee]) or note < 0 or note > 20:
-        return "Erreur : Données invalides (Vérifiez les champs et la note 0-20).", 400
-
     conn = get_db()
     try:
-        # 3. Vérification : L'étudiant existe-t-il ?
+        # Vérification si l'étudiant existe
         etudiant = conn.execute('SELECT 1 FROM etudiants WHERE id = ?', (mat_etu,)).fetchone()
         if not etudiant:
             return f"Erreur : Aucun étudiant trouvé avec le matricule {mat_etu}.", 404
 
-        # 4. Insertion sécurisée
-        conn.execute
+        # INSERTION CORRECTE ET COMPLÈTE :
+        conn.execute('INSERT INTO notes (id, matiere, note, semestre, annee) VALUES (?, ?, ?, ?, ?)', 
+                     (mat_etu, matiere, note_val, semestre, annee))
+        conn.commit()
+    except Exception as e:
+        print(f"Erreur SQL : {e}")
+        return f"Erreur : {e}", 500
+    finally:
+        conn.close()
+        
+    return redirect(url_for('admin_panel'))
 
 @app.route('/releve_notes')
 def releve_notes():
