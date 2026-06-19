@@ -54,6 +54,7 @@ def login():
             return redirect(url_for('admin_panel'))
             
         # Test Étudiant
+        print(f"DEBUG - Tentative avec ID: '{identifiant}' et MDP: '{password}'")
         etu = conn.execute('SELECT * FROM etudiants WHERE id=? AND mdp=?', (identifiant, password)).fetchone()
         conn.close()
         
