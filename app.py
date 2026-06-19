@@ -86,6 +86,33 @@ def ajouter_etudiant():
     finally: conn.close()
     return redirect(url_for('admin_panel'))
 
+@app.route('/ajouter_note', methods=['POST'])
+def ajouter_note():
+    # Vérification de sécurité
+    if session.get('role') != 'admin':
+        return "Accès refusé", 403
+    
+    # Récupération des données du formulaire HTML
+    mat_etu = request.form.get('id')
+    matiere = request.form.get('matiere')
+    note = request.form.get('note')
+    semestre = request.form.get('semestre')
+    annee = request.form.get('annee')
+    
+    conn = get_db()
+    try:
+        # Insertion des 5 valeurs dans la table notes
+        conn.execute('INSERT INTO notes (id, matiere, note, semestre, annee) VALUES (?, ?, ?, ?, ?)', 
+                     (mat_etu, matiere, note, semestre, annee))
+        conn.commit()
+    except Exception as e:
+        print(f"Erreur SQL : {e}")
+        return f"Erreur lors de l'enregistrement : {e}", 500
+    finally:
+        conn.close()
+        
+    return redirect(url_for('admin_panel'))   
+
 @app.route('/releve_notes')
 def releve_notes():
     if 'user_id' not in session: return redirect(url_for('login'))
