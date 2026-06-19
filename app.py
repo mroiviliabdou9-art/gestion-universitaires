@@ -88,30 +88,33 @@ def ajouter_etudiant():
 
 @app.route('/ajouter_note', methods=['POST'])
 def ajouter_note():
-    # Vérification de sécurité
     if session.get('role') != 'admin':
         return "Accès refusé", 403
     
-    # Récupération des données du formulaire HTML
+    # 1. Récupération et nettoyage des données
     mat_etu = request.form.get('id')
     matiere = request.form.get('matiere')
-    note = request.form.get('note')
-    semestre = request.form.get('semestre')
     annee = request.form.get('annee')
+    semestre = request.form.get('semestre')
     
+    try:
+        note = float(request.form.get('note'))
+    except (TypeError, ValueError):
+        return "Erreur : La note doit être un nombre valide.", 400
+
+    # 2. Validation basique
+    if not all([mat_etu, matiere, semestre, annee]) or note < 0 or note > 20:
+        return "Erreur : Données invalides (Vérifiez les champs et la note 0-20).", 400
+
     conn = get_db()
     try:
-        # Insertion des 5 valeurs dans la table notes
-        conn.execute('INSERT INTO notes (id, matiere, note, semestre, annee) VALUES (?, ?, ?, ?, ?)', 
-                     (mat_etu, matiere, note, semestre, annee))
-        conn.commit()
-    except Exception as e:
-        print(f"Erreur SQL : {e}")
-        return f"Erreur lors de l'enregistrement : {e}", 500
-    finally:
-        conn.close()
-        
-    return redirect(url_for('admin_panel'))   
+        # 3. Vérification : L'étudiant existe-t-il ?
+        etudiant = conn.execute('SELECT 1 FROM etudiants WHERE id = ?', (mat_etu,)).fetchone()
+        if not etudiant:
+            return f"Erreur : Aucun étudiant trouvé avec le matricule {mat_etu}.", 404
+
+        # 4. Insertion sécurisée
+        conn.execute
 
 @app.route('/releve_notes')
 def releve_notes():
@@ -132,6 +135,22 @@ def update_periode():
     conn.commit()
     conn.close()
     return redirect(url_for('admin_panel'))
+
+@app.route('/archives', methods=['POST'])
+def archives():
+    if session.get('role') != 'admin': return "Accès refusé", 403
+    
+    mat_etu = request.form.get('id')
+    annee = request.form.get('annee')
+    
+    conn = get_db()
+    # On cherche les notes correspondant au matricule et à l'année
+    query = 'SELECT * FROM notes WHERE id = ? AND annee = ?'
+    notes = conn.execute(query, (mat_etu, annee)).fetchall()
+    conn.close()
+    
+    # On réutilise une page d'affichage (ou tu peux créer archives.html)
+    return render_template('releves_notes.html', notes=notes)
 
 if __name__ == '__main__':
     app.run(debug=True)
