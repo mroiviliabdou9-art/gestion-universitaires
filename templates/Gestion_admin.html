@@ -58,18 +58,27 @@
         </div>
 
         <div id="acces" class="section">
-            <h2>Gestion accès</h2>
-            <form action="/update_periode" method="POST">
-                <select name="periode">
-                    <option value="S1">Semestre 1</option>
-                    <option value="S2">Semestre 2</option>
-                    <option value="REPECHAGE">Répêchage</option>
-                    <option value="FERME">Fermer le système</option>
-                </select>
-                <button type="submit" class="btn-valider">Appliquer</button>
-            </form>
-            <button class="btn-retour" onclick="show('menu-principal')">⬅ Retour</button>
-        </div>
+    <h2>Gestion des accès</h2>
+    <form action="/update_periode" method="POST">
+        <label>Période :</label>
+        <select name="periode">
+            <option value="S1">Semestre 1</option>
+            <option value="S2">Semestre 2</option>
+            <option value="REPECHAGE">Répêchage</option>
+            <option value="FERME">Fermer le système</option>
+        </select>
+        
+        <label>Durée de validité (en minutes) :</label>
+        <input type="number" name="delai" placeholder="ex: 60" required>
+        
+        <button type="submit" class="btn-valider">Appliquer et activer le lien</button>
+    </form>
+    
+    <div style="margin-top:20px;">
+        <p>Partagez ce lien aux étudiants :</p>
+        <input type="text" value="https://ton-projet.onrender.com/" readonly>
+    </div>
+</div>
 
         <div id="profil" class="section">
             <h2>Profil Administration</h2>

@@ -6,40 +6,29 @@
     <title>Relevé de Notes</title>
     <style>
         body { font-family: sans-serif; background: #f4f6f9; padding: 20px; margin: 0; }
-        
-        /* Conteneur principal flexible */
-        .box { 
-            width: 100%; 
-            max-width: 800px; /* Largeur confortable sur PC */
-            margin: auto; 
-            background: white; 
-            padding: 20px; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            box-sizing: border-box; /* Important pour que le padding ne dépasse pas */
-        }
-        
+        .box { width: 100%; max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); box-sizing: border-box; }
         .header { display: flex; align-items: center; border-bottom: 2px solid #007BFF; padding-bottom: 15px; margin-bottom: 25px; }
         .logo-small { width: 50px; height: 50px; margin-right: 15px; border-radius: 8px; }
         h1 { color: #007BFF; font-size: 1.5rem; margin: 0; }
         
-        /* Tableau scrollable sur mobile */
         .table-container { width: 100%; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; min-width: 400px; }
         th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
         th { background: #007BFF; color: white; }
         
-        .btn-logout { display: block; width: 100%; padding: 12px; margin-top: 30px; background: #dc3545; color: white; text-align: center; text-decoration: none; border-radius: 6px; font-weight: bold; box-sizing: border-box; }
+        .btn-download { display: block; width: 100%; padding: 12px; margin-top: 20px; background: #28a745; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .btn-logout { display: block; width: 100%; padding: 12px; margin-top: 10px; background: #dc3545; color: white; text-align: center; text-decoration: none; border-radius: 6px; font-weight: bold; }
+        .btn-retour-admin { display: block; width: 100%; padding: 12px; margin-top: 20px; background: #6c757d; color: white; text-align: center; text-decoration: none; border-radius: 6px; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="box">
         <div class="header">
             <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo-small">
-            <h1>Relevé de Notes</h1>
+            <h1>Relevé de Notes ({{ periode }})</h1>
         </div>
 
-        <p><strong>Étudiant(e) :</strong> {{ session.get('user_id') }}</p>
+        <p><strong>Étudiant(e) :</strong> {{ etudiant['nom'] }} (Matricule : {{ etudiant['id'] }})</p>
 
         <div class="table-container">
             <table>
@@ -59,23 +48,28 @@
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="3">Aucune note disponible.</td>
+                        <td colspan="3">Aucune note disponible pour cette période.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-        <button onclick="genererPDF()" class="btn-download">Télécharger en PDF</button>
-        <a href="/" class="btn-logout">Se déconnecter</a>
+        
+        {% if est_admin %}
+            <a href="/admin" class="btn-retour-admin">⬅ Retour à l'administration</a>
+        {% else %}
+            <button onclick="genererPDF()" class="btn-download">Télécharger en PDF</button>
+            <a href="/" class="btn-logout">Se déconnecter</a>
+        {% endif %}
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
         function genererPDF() {
-          const element = document.querySelector('.box'); // On sélectionne tout le bloc du relevé
+          const element = document.querySelector('.box');
           const opt = {
             margin:       10,
-            filename:     'Releve_Notes.pdf',
+            filename:     'Releve_{{ etudiant["id"] }}.pdf',
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2 },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
