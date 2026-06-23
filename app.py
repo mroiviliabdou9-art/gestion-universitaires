@@ -1,70 +1,38 @@
-import sqlite3
 import os
+import datetime
 from flask import Flask, render_template, request, redirect, url_for, session
+from supabase import create_client
 
 app = Flask(__name__)
 app.secret_key = 'projet_2k26_secret'
-DB_PATH = os.path.join(os.path.dirname(__file__), 'universite.db')
 
-def init_db():
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute('''CREATE TABLE IF NOT EXISTS etudiants (id TEXT PRIMARY KEY, nom TEXT, mention TEXT, mdp TEXT)''')
-    cursor.execute('''CREATE TABLE IF NOT EXISTS notes (id TEXT, matiere TEXT, note REAL, semestre TEXT, annee TEXT)''')
-    cursor.execute('''CREATE TABLE IF NOT EXISTS admins (id TEXT PRIMARY KEY, password TEXT)''') 
-    cursor.execute('''CREATE TABLE IF NOT EXISTS configuration (periode_active TEXT, expiration_time TIMESTAMP)''')
-    
-    cursor.execute("SELECT count(*) FROM admins")
-    if cursor.fetchone()[0] == 0:
-        cursor.executemany('INSERT INTO admins VALUES (?, ?)', [('admin1', '123'), ('admin2', '123')])
-    
-    cursor.execute("SELECT count(*) FROM configuration")
-    if cursor.fetchone()[0] == 0:
-        cursor.execute('INSERT INTO configuration (periode_active) VALUES ("FERME")')
-    
-    conn.commit()
-    conn.close()
 
-init_db()
-
-def get_db():
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    return conn
-
-def est_periode_ouverte():
-    conn = get_db()
-    res = conn.execute('SELECT periode_active FROM configuration LIMIT 1').fetchone()
-    conn.close()
-    return res['periode_active'] if res else "FERME"
+# On récupère les clés depuis les "Variables d'environnement" du serveur
+load_dotenv('cle.env')
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        # .strip() élimine les espaces accidentels au début/fin
         identifiant = request.form.get('identifiant', '').strip()
         password = request.form.get('password', '').strip()
         
-        conn = get_db()
         # Test Admin
-        admin = conn.execute('SELECT * FROM admins WHERE id=? AND password=?', (identifiant, password)).fetchone()
-        if admin:
+        admin = supabase.table('admins').select("*").eq('id', identifiant).eq('password', password).execute()
+        if admin.data:
             session['role'] = 'admin'
-            conn.close()
             return redirect(url_for('admin_panel'))
             
         # Test Étudiant
-        print(f"DEBUG - Tentative avec ID: '{identifiant}' et MDP: '{password}'")
-        etu = conn.execute('SELECT * FROM etudiants WHERE id=? AND mdp=?', (identifiant, password)).fetchone()
-        conn.close()
-        
-        if etu:
+        etu = supabase.table('etudiants').select("*").eq('id', identifiant).eq('mdp', password).execute()
+        if etu.data:
             session['role'] = 'etudiant'
             session['user_id'] = identifiant
             return redirect(url_for('releve_notes'))
         else:
             return "Identifiant ou mot de passe incorrect.", 401
-            
     return render_template('index.html')
 
 @app.route('/admin')
@@ -72,161 +40,104 @@ def admin_panel():
     if session.get('role') != 'admin': return redirect(url_for('login'))
     return render_template('Gestion_admin.html')
 
-@app.route('/ajouter_etudiant', methods=['POST'])
-def ajouter_etudiant():
-    if session.get('role') != 'admin': return "Accès refusé", 403
-    conn = get_db()
-    try:
-        conn.execute('INSERT INTO etudiants VALUES (?, ?, ?, ?)', 
-                     (request.form.get('id').strip(), request.form.get('nom'), request.form.get('mention'), request.form.get('mdp')))
-        conn.commit()
-    except Exception as e: return f"Erreur lors de l'inscription : {e}", 500
-    finally: conn.close()
-    return redirect(url_for('admin_panel'))
-
+# Route pour ajouter une note (Admin)
 @app.route('/ajouter_note', methods=['POST'])
 def ajouter_note():
     if session.get('role') != 'admin': return "Accès refusé", 403
     
-    mat_etu = request.form.get('id', '').strip()
-    matiere = request.form.get('matiere')
-    note = request.form.get('note')
-    semestre = request.form.get('semestre')
-    annee = request.form.get('annee', '').strip()
-    
     try:
-        note_val = float(note)
-    except: return "Erreur : La note doit être un nombre.", 400
+        data = {
+            "etudiant_id": request.form.get('id', '').strip(),
+            "matiere": request.form.get('matiere'),
+            "note": float(request.form.get('note')),
+            "semestre": request.form.get('semestre'),
+            "annee": request.form.get('annee', '').strip()
+        }
+        # Insertion dans la table 'notes'
+        supabase.table('notes').insert(data).execute()
+        return redirect(url_for('admin_panel'))
+    except ValueError:
+        return "Erreur : La note doit être un nombre valide.", 400
+    except Exception as e:
+        return f"Une erreur est survenue : {str(e)}", 500
 
-    conn = get_db()
-    try:
-        etudiant = conn.execute('SELECT 1 FROM etudiants WHERE id = ?', (mat_etu,)).fetchone()
-        if not etudiant: return f"Erreur : Étudiant {mat_etu} inconnu.", 404
-
-        conn.execute('INSERT INTO notes (id, matiere, note, semestre, annee) VALUES (?, ?, ?, ?, ?)', 
-                     (mat_etu, matiere, note_val, semestre, annee))
-        conn.commit()
-    finally: conn.close()
-    return redirect(url_for('admin_panel'))
-
-
+# Route pour voir les notes (Étudiant)
 @app.route('/releve_notes')
 def releve_notes():
-    if 'user_id' not in session: 
-        return redirect(url_for('login'))
+    if 'user_id' not in session: return redirect(url_for('login'))
     
-    conn = get_db()
-    
-    # 1. Vérification de la configuration (accès et date)
-    config = conn.execute('SELECT * FROM configuration LIMIT 1').fetchone()
-    
-    now = datetime.datetime.now()
-    expiration = None
-    if config and config['expiration_time']:
-        try:
-            expiration = datetime.datetime.fromisoformat(config['expiration_time'])
-        except ValueError:
-            expiration = None
-            
-    if not config or config['periode_active'] == "FERME" or (expiration and now > expiration):
-        conn.close()
-        return "L'accès est actuellement fermé ou le délai est expiré.", 403
-    
-    periode_active = config['periode_active']
+    # 1. Vérification de la période
+    config = supabase.table('configuration').select("*").limit(1).execute().data[0]
+    if not config or config['periode_active'] == "FERME":
+        return "L'accès est actuellement fermé.", 403
 
-    # 2. Récupération des notes pour la période active uniquement
-    # On filtre par ID et par la période (S1, S2, REPECHAGE)
-    toutes_les_notes = conn.execute(
-        'SELECT * FROM notes WHERE id = ? AND semestre = ?', 
-        (session['user_id'], periode_active)
-    ).fetchall()
+    periode = config['periode_active']
     
-    # 3. Récupération des infos étudiant
-    etudiant = conn.execute('SELECT * FROM etudiants WHERE id = ?', (session['user_id'],)).fetchone()
-    conn.close()
+    # 2. Récupération des notes avec le bon nom de colonne : 'etudiant_id'
+    notes_data = supabase.table('notes') \
+        .select("*") \
+        .eq('etudiant_id', session['user_id']) \
+        .eq('semestre', periode) \
+        .execute().data
 
-    # 4. Calcul des moyennes par matière
+    # 3. Calcul des moyennes
     releve_calcule = {}
-    for n in toutes_les_notes:
+    for n in notes_data:
         mat = n['matiere']
-        if mat not in releve_calcule:
-            releve_calcule[mat] = {'notes': [], 'matiere': mat}
+        if mat not in releve_calcule: releve_calcule[mat] = {'notes': [], 'matiere': mat}
         releve_calcule[mat]['notes'].append(float(n['note']))
 
     for mat in releve_calcule:
         liste = releve_calcule[mat]['notes']
-        releve_calcule[mat]['liste_notes'] = ", ".join(map(str, liste))
-        releve_calcule[mat]['moyenne'] = sum(liste) / len(liste)
+        releve_calcule[mat]['moyenne'] = round(sum(liste) / len(liste), 2)
 
-    # 5. Affichage
-    return render_template(
-        'releves_notes.html', 
-        notes=releve_calcule.values(), 
-        etudiant=etudiant, 
-        periode=periode_active,
-        est_admin=False
-    )
-
-
+    return render_template('releves_notes.html', notes=releve_calcule.values(), periode=periode)
 @app.route('/update_periode', methods=['POST'])
 def update_periode():
-    if session.get('role') != 'admin': return "Accès refusé", 403
+    if session.get('role') != 'admin': 
+        return "Accès refusé", 403
     
-    periode = request.form.get('periode')
-    delai_minutes = int(request.form.get('delai')) # Nouveau champ dans ton HTML
+    # On récupère la valeur envoyée par le formulaire
+    nouvelle_valeur = request.form.get('periode')
     
-    # Calcul de l'heure d'expiration
-    expiration = datetime.datetime.now() + datetime.timedelta(minutes=delai_minutes)
-    
-    conn = get_db()
-    conn.execute('UPDATE configuration SET periode_active = ?, expiration_time = ?', 
-                 (periode, expiration))
-    conn.commit()
-    conn.close()
+    # On met à jour directement la ligne de configuration (en supposant qu'elle a l'id 1)
+    # Si ta table n'a pas de colonne 'id', utilise la colonne qui identifie ta ligne unique
+    supabase.table('configurations').update({"periode_active": nouvelle_valeur}).eq('id', 1).execute()
     
     return redirect(url_for('admin_panel'))
-
-@app.route('/archives', methods=['POST'])
-def archives():
+@app.route('/archive', methods=['GET', 'POST'])
+def archive():
     if session.get('role') != 'admin': return "Accès refusé", 403
     
-    mat_etu = request.form.get('id', '').strip()
-    annee = request.form.get('annee', '').strip()
-    
-    conn = get_db()
-    # 1. Récupération des données brutes
-    notes_brutes = conn.execute(
-        'SELECT * FROM notes WHERE id = ? AND annee = ?', 
-        (mat_etu, annee)
-    ).fetchall()
-    
-    etudiant = conn.execute('SELECT * FROM etudiants WHERE id = ?', (mat_etu,)).fetchone()
-    conn.close()
-    
-    if not notes_brutes:
-        return f"Aucune note trouvée pour le matricule {mat_etu} en {annee}.", 404
-    
-    # 2. Calcul des moyennes (pour que le template fonctionne)
-    releve_calcule = {}
-    for n in notes_brutes:
-        mat = n['matiere']
-        if mat not in releve_calcule:
-            releve_calcule[mat] = {'notes': [], 'matiere': mat}
-        releve_calcule[mat]['notes'].append(float(n['note']))
-
-    for mat in releve_calcule:
-        liste = releve_calcule[mat]['notes']
-        releve_calcule[mat]['liste_notes'] = ", ".join(map(str, liste))
-        releve_calcule[mat]['moyenne'] = sum(liste) / len(liste)
-    
-    # 3. Affichage en passant les mêmes variables que dans releve_notes
-    return render_template(
-        'releves_notes.html', 
-        notes=releve_calcule.values(), 
-        etudiant=etudiant, 
-        periode=f"Archive Année {annee}",
-        est_admin=True
-    )
+    notes = None
+    if request.method == 'POST':
+        etu_id = request.form.get('id', '').strip()
+        annee = request.form.get('annee', '').strip()
+        
+        # Récupération des notes selon les critères
+        notes = supabase.table('notes') \
+            .select("*") \
+            .eq('etudiant_id', etu_id) \
+            .eq('annee', annee) \
+            .execute().data
+            
+    return render_template('archive.html', notes=notes)
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+@app.route('/update_profil', methods=['POST'])
+def update_profil():
+    if session.get('role') != 'admin': return "Accès refusé", 403
+    
+    new_user = request.form.get('new_username')
+    new_pass = request.form.get('new_password')
+    
+    # Mise à jour dans Supabase (dans la table 'admins')
+    # On met à jour l'admin actuellement connecté
+    supabase.table('admins').update({
+        'id': new_user,
+        'password': new_pass
+    }).eq('id', session.get('user_id')).execute()
+    
+    return "Profil mis à jour ! <a href='/admin'>Retour</a>"
