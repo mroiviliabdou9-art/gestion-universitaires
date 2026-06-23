@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Archives - Administration</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f6f9; padding: 20px; }
+        .box { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
+        h1 { color: #333; text-align: center; }
+        
+        /* Formulaire de recherche */
+        form { margin-bottom: 20px; padding: 15px; border: 1px solid #ccc; border-radius: 6px; }
+        label { display: block; margin: 10px 0 5px; }
+        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        button { margin-top: 15px; width: 100%; padding: 12px 20px; background: #007BFF; color: white; border: none; border-radius: 6px; cursor: pointer; }
+        
+        /* Tableau */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
+        th { background: #f8f9fa; }
+        
+        /* Bouton retour */
+        .btn-retour { display: inline-block; margin-top: 20px; padding: 10px 20px; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; }
+        
+        /* Media queries */
+        @media (min-width: 600px) { .box { width: 450px; } }
+        @media (min-width: 900px) { .box { width: 600px; } }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div class="box">
+        <h1>Espace Archives Administrateur</h1>
+        <hr>
+
+        {% if notes is not none %}
+            {% if notes %}
+                <h2>Relevé trouvé</h2>
+                <table border="1">
+                    <tr>
+                        <th>Matière</th>
+                        <th>Note</th>
+                        <th>Semestre</th>
+                    </tr>
+                    {% for n in notes %}
+                    <tr>
+                        <td>{{ n.matiere }}</td>
+                        <td>{{ n.note }}</td>
+                        <td>{{ n.semestre }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <p style="color: red; text-align: center;">Aucun résultat trouvé pour cet ID et cette année.</p>
+            {% endif %}
+        {% endif %}
+
+        <a href="/admin" class="btn-retour">⬅ Retour Administration</a>
+    </div>
+</body>
+</html>
